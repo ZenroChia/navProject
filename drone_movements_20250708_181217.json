@@ -1,0 +1,73 @@
+{
+  "session_info": {
+    "total_waypoints": 4,
+    "total_movements": 6
+  },
+  "waypoints": [
+    {
+      "id": "WP_001",
+      "name": "START",
+      "movements_to_here": []
+    },
+    {
+      "id": "WP_002",
+      "name": "first",
+      "movements_to_here": [
+        {
+          "id": "40f47a83-0dcd-46cb-a7aa-fd8c72eefc39",
+          "type": "move",
+          "yaw": 87,
+          "distance": 98.76,
+          "timestamp": "2025-07-08T18:12:37.547985"
+        }
+      ]
+    },
+    {
+      "id": "WP_003",
+      "name": "second",
+      "movements_to_here": [
+        {
+          "id": "d60b878b-4aeb-45e1-9a33-0808e0c56fd1",
+          "type": "move",
+          "yaw": -93,
+          "distance": 166.7,
+          "timestamp": "2025-07-08T18:12:46.433673"
+        },
+        {
+          "id": "76657828-c08d-43df-80b0-335362bb6a19",
+          "type": "move",
+          "yaw": -93,
+          "distance": 1.94,
+          "timestamp": "2025-07-08T18:12:47.283943"
+        },
+        {
+          "id": "7e9eb2e7-a0ab-4112-93ce-226e8767460d",
+          "type": "move",
+          "yaw": -3,
+          "distance": 26.53,
+          "timestamp": "2025-07-08T18:12:48.135136"
+        }
+      ]
+    },
+    {
+      "id": "WP_004",
+      "name": "END",
+      "movements_to_here": [
+        {
+          "id": "ec128370-91c4-4c9d-a87c-18eaa126f40b",
+          "type": "move",
+          "yaw": 178,
+          "distance": 75.29,
+          "timestamp": "2025-07-08T18:12:56.949651"
+        },
+        {
+          "id": "2e55dbf5-cfb1-4f00-a522-27f20979e4d9",
+          "type": "lift",
+          "direction": "up",
+          "distance": 19.53,
+          "timestamp": "2025-07-08T18:12:59.778799"
+        }
+      ]
+    }
+  ]
+}
