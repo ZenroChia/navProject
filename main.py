@@ -171,7 +171,7 @@ class TelloNavigationApp:
         
         # Start user interface
         try:
-            self.drone_controller.run(droe_instance=self.tello)
+            self.drone_controller.run(drone_instance=self.tello)
         except Exception as e:
             print(f"Error during execution: {e}")
             return
