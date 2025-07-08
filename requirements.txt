@@ -1,0 +1,5 @@
+# DJI Tello Navigation System Requirements
+# Python 3.7+ required for dataclasses and advanced typing features
+
+# Main drone control library
+djitellopy==2.5.0

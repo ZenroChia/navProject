@@ -1,0 +1,33 @@
+{
+  "session_info": {
+    "total_waypoints": 2,
+    "total_movements": 2
+  },
+  "waypoints": [
+    {
+      "id": "WP_001",
+      "name": "START",
+      "movements_to_here": []
+    },
+    {
+      "id": "WP_002",
+      "name": "END",
+      "movements_to_here": [
+        {
+          "id": "6d369d9b-78ea-4cbd-8be9-a31593ec595c",
+          "type": "lift",
+          "direction": "up",
+          "distance": 53.555,
+          "timestamp": "2025-07-03T14:05:27.256813"
+        },
+        {
+          "id": "0493c223-1e9e-41c2-92be-29bb257fd55b",
+          "type": "lift",
+          "direction": "down",
+          "distance": 26.055,
+          "timestamp": "2025-07-03T14:05:36.985242"
+        }
+      ]
+    }
+  ]
+}
