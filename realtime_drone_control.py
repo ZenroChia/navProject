@@ -13,8 +13,6 @@ from datetime import datetime
 class RealTimeDroneController:
     def __init__(self):
         """Initialize the drone controller with recording capabilities."""
-        self.is_connected = False
-        self.is_flying = False
         self.movement_speed = 38  # cm/s
         self.rotation_speed = 70  # degrees/s
         
@@ -321,8 +319,6 @@ class RealTimeDroneController:
 
     def handle_keypress(self, drone_instance=None):
         """Handle keyboard input for drone control using termios."""
-        if not self.is_flying:
-            return
         
         # Save original terminal settings
         old_settings = termios.tcgetattr(sys.stdin)
@@ -337,7 +333,7 @@ class RealTimeDroneController:
             
             print("🎮 Keyboard controls active!")
             
-            while self.is_flying:
+            while True:
                 # Battery check every 5 seconds
                 current_time = time.time()
                 if current_time - last_battery_check > 5:
@@ -365,12 +361,14 @@ class RealTimeDroneController:
                     elif key == 'x': 
                         if not x_pressed:
                             if self.current_movement:
-                                self.stop_movement()
+                                self.stop_movement(drone_instance=drone_instance)
                                 activeMovementKey = None
 
                             print("\r--- Marking Waypoint ---")
                             termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
+
                             self.mark_waypoint()
+
                             old_settings = termios.tcgetattr(sys.stdin)
                             tty.setraw(sys.stdin)
                             x_pressed = True
@@ -383,7 +381,7 @@ class RealTimeDroneController:
                             # Stop current movement if any
                             if activeMovementKey:
                                 print(f"\r🛑 Stopping movement: {activeMovementKey}        ")
-                                self.stop_movement()
+                                self.stop_movement(drone_instance=drone_instance)
 
                             # Start new movement
                             activeMovementKey = key
@@ -415,14 +413,14 @@ class RealTimeDroneController:
                         print(f"\r🎮 Unrecognized key: '{key}'                  ")
                         if self.current_movement:
                             print("\r🛑 Stopping current movement due to unrecognized key")
-                            self.stop_movement(drone_instance)
+                            self.stop_movement(drone_instance=drone_instance)
                             activeMovementKey = None
                         continue
                 else:
                     # No key pressed, stop any movement
                     if self.current_movement:
                         print("\r🛑 No key pressed, stopping current movement    ")
-                        self.stop_movement(drone_instance)
+                        self.stop_movement(drone_instance=drone_instance)
                         activeMovementKey = None
                     continue
                 
@@ -436,20 +434,24 @@ class RealTimeDroneController:
             print("\r🎮 Keyboard controls ended            ")
     
     
-    def run(self, droe_instance=None):
+    def run(self, drone_instance=None):
         """Main control loop."""
         
         print("Starting keyboard control... Press ESC to exit")
         
+        # Mark the first waypoint automatically
+        self.mark_waypoint("START", auto_generated=True)
+        print("First waypoint marked: START")
+
         try:
-            self.handle_keypress()
+            self.handle_keypress(drone_instance=drone_instance)
         except KeyboardInterrupt:
             print("\nKeyboard interrupt received")
         
         finally:
             # Ensure the last waypoint is marked if there are movements
             if self.current_movement:
-                self.stop_movement()
+                self.stop_movement(drone_instance=drone_instance)
             
             # Mark final waypoint if there are pending movements
             if self.current_waypoint_movements:
@@ -459,18 +461,3 @@ class RealTimeDroneController:
             self.save_to_json()
                 
             print(f"\nSession complete! Data saved to: {self.data_file}")
-
-def main():
-    """Main function to start the drone control system."""
-    controller = RealTimeDroneController()
-    
-    try:
-        controller.run()
-    except Exception as e:
-        print(f"Error during execution: {e}")
-        if controller.is_flying:
-            controller.land()
-
-
-if __name__ == "__main__":
-    main()
