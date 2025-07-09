@@ -57,14 +57,10 @@ class TelloNavigationApp:
         try:
             self._show_welcome()
             
-            # Get user choice for mode
-            mode = self._get_startup_mode()
-            
-            if mode == "mapping":
-                self._run_mapping_mode()
-            elif mode == "navigation":
-                if self.environment_mod: 
-                    while True: 
+            if self.environment_mod:
+                print("🔧 Environment modification mode enabled")
+                print("Running navigation mode with vertical airflow factor adjustment")
+                while True: 
                         try:
                             vertical_factor = float(input("Enter vertical factor to account for vertical airflow (greater than 0): "))
                             if vertical_factor <= 0: 
@@ -75,11 +71,17 @@ class TelloNavigationApp:
                         except ValueError:
                             print("❌ Invalid input. Please enter a numeric value.")
                             continue
-                    self._run_navigation_mode(vertical_factor=vertical_factor)
-                else: 
+                self._run_navigation_mode(vertical_factor=vertical_factor)
+            else:
+                # Get user choice for mode
+                mode = self._get_startup_mode()
+                
+                if mode == "mapping":
+                    self._run_mapping_mode()
+                elif mode == "navigation":
                     self._run_navigation_mode()
-            elif mode == "quit":
-                return
+                elif mode == "quit":
+                    return
             
         except KeyboardInterrupt:
             print("\n🛑 Application interrupted by user")

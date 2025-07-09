@@ -239,10 +239,9 @@ class WaypointNavigationManager:
         try: 
             for i, movement in enumerate(movements, 1):
                 print(f"  Step {i}/{len(movements)}: {movement.type} ")
-
+                distance = movement.distance if movement.distance is not None and movement.distance >= 20 else 20  # Ensure minimum valid distance for movement
                 if movement.type == "move":
                     yaw = movement.yaw if movement.yaw is not None else 0
-                    distance = movement.distance if movement.distance is not None else 0
                     current_yaw = self.get_yaw(drone_instance=drone_instance)
                     
                     turn_degree = abs(yaw - current_yaw)
@@ -250,36 +249,46 @@ class WaypointNavigationManager:
                         print(f"  Adjusting yaw from {current_yaw} to {yaw} degrees")
                         if turn_degree > 180 and turn_degree < 360: 
                             drone_instance.rotate_clockwise(360 - turn_degree)
-                            time.sleep(0.5)  # Allow time for rotation
                         elif turn_degree <= 180 and turn_degree > 0: 
                             drone_instance.rotate_counter_clockwise(turn_degree)
-                            time.sleep(0.5)  # Allow time for rotation
                         else: 
                             print("  No yaw adjustment needed")
+                        drone_instance.send_rc_control(0, 0, 0, 0)  # Stop any ongoing movement
                     else: 
                         print(f"  Adjusting yaw from {current_yaw} to {yaw} degrees")
                         if turn_degree > 180 and turn_degree < 360: 
                             drone_instance.rotate_counter_clockwise(360 - turn_degree)
-                            time.sleep(0.5)  # Allow time for rotation
                         elif turn_degree <= 180 and turn_degree > 0: 
                             drone_instance.rotate_clockwise(turn_degree)
-                            time.sleep(0.5)  # Allow time for rotation
                         else: 
                             print("  No yaw adjustment needed")
+                        drone_instance.send_rc_control(0, 0, 0, 0)  # Stop any ongoing movement
 
                     drone_instance.move_forward(int(distance))
-                    time.sleep(0.5)  # Allow time for movement
+                    drone_instance.send_rc_control(0, 0, 0, 0)  # Stop any ongoing movement
                     print(f"  Moved forward {distance} cm at yaw {yaw} degrees")
+
                 else:
-                    distance = movement.distance if movement.distance is not None else 0
-                    if movement.direction == "up":
-                        drone_instance.move_up(int(distance))
-                        time.sleep(0.5)  # Allow time for lifting
-                        print(f"  Lifted up {distance} cm")
-                    else: 
-                        drone_instance.move_down(int(distance))
-                        time.sleep(0.5)  # Allow time for lowering
-                        print(f"  Lowered down {distance} cm")
+                    match (movement.direction, direction): 
+                        case ("up", NavigationDirection.FORWARD):
+                            actual_distance = max((distance / vertical_factor), 20)
+                            drone_instance.move_up(int(actual_distance))
+                            print(f"  Lifted up {actual_distance} cm")
+                        case ("down", NavigationDirection.FORWARD):
+                            actual_distance = max((distance * vertical_factor), 20)
+                            drone_instance.move_down(int(actual_distance))
+                            print(f"  Lowered down {actual_distance} cm")
+                        ############# REVERSE MOVEMENT HANDLING #############
+                        case ("up", NavigationDirection.REVERSE):
+                            actual_distance = max((distance * vertical_factor), 20)
+                            drone_instance.move_up(int(actual_distance))
+                            print(f"  Lifted up {actual_distance} cm")
+                        case ("down", NavigationDirection.REVERSE):
+                            actual_distance = max((distance / vertical_factor), 20)
+                            drone_instance.move_down(int(actual_distance))
+                            print(f"  Lowered down {actual_distance} cm")
+                    
+                    drone_instance.send_rc_control(0, 0, 0, 0)  # Stop any ongoing movement
             
             print("✅ Navigation movements completed")
             return True
