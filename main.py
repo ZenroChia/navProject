@@ -30,15 +30,15 @@ from navigation_interface import NavigationInterface
 
 class TelloNavigationApp:
     """Main application class for Tello navigation system."""
-    
-    def __init__(self, simulate: bool = False):
+
+    def __init__(self, environment_mod: bool = False):
         """
         Initialize the navigation application.
         
         Args:
-            simulate: If True, runs in simulation mode without actual drone
+            environment_mod: If True, enables environment modification mode
         """
-        self.simulate = simulate
+        self.environment_mod = environment_mod
         self.drone_controller = RealTimeDroneController()
         self.nav_interface = NavigationInterface()
         self.tello = Tello()
@@ -63,7 +63,21 @@ class TelloNavigationApp:
             if mode == "mapping":
                 self._run_mapping_mode()
             elif mode == "navigation":
-                self._run_navigation_mode()
+                if self.environment_mod: 
+                    while True: 
+                        try:
+                            vertical_factor = float(input("Enter vertical factor to account for vertical airflow (greater than 0): "))
+                            if vertical_factor <= 0: 
+                                print("❌ Invalid vertical factor. Must be greater than zero.")
+                                continue
+                            else: 
+                                break
+                        except ValueError:
+                            print("❌ Invalid input. Please enter a numeric value.")
+                            continue
+                    self._run_navigation_mode(vertical_factor=vertical_factor)
+                else: 
+                    self._run_navigation_mode()
             elif mode == "quit":
                 return
             
@@ -186,7 +200,7 @@ class TelloNavigationApp:
         files = glob.glob(pattern)
         return sorted(files, reverse=True)
     
-    def _run_navigation_mode(self):
+    def _run_navigation_mode(self, vertical_factor=1.0):
         """Run the application in navigation mode."""
         print("\n🧭 NAVIGATION MODE ACTIVATED")
         
@@ -203,7 +217,7 @@ class TelloNavigationApp:
         self.is_running = True
         
         try: 
-            self.nav_interface.run(drone_instance=self.tello)
+            self.nav_interface.run(drone_instance=self.tello, vertical_factor=vertical_factor)
         except Exception as e:
             print(f"Error during navigation: {e}")
         finally: 
@@ -288,12 +302,11 @@ def main():
     import argparse
     
     parser = argparse.ArgumentParser(description='DJI Tello Navigation System')
-    parser.add_argument('--simulate', action='store_true', 
-                       help='Run in simulation mode without actual drone')
+    parser.add_argument('-e', '--environmentMod', action='store_true', help='Enable environment modification mode')
     
     args = parser.parse_args()
-    
-    app = TelloNavigationApp(simulate=args.simulate)
+
+    app = TelloNavigationApp(environment_mod=args.environmentMod)
     app.run()
 
 if __name__ == "__main__":

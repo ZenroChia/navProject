@@ -15,7 +15,7 @@ class NavigationInterface:
         self.nav_manager = WaypointNavigationManager()
         self.is_running = True
     
-    def run(self, drone_instance=None):
+    def run(self, drone_instance=None, vertical_factor=1.0):
         """Run the navigation interface."""
         try:
             if drone_instance is None:
@@ -30,7 +30,7 @@ class NavigationInterface:
                 return
             
             # Main navigation loop
-            self._navigation_loop(drone_instance=drone_instance)
+            self._navigation_loop(drone_instance=drone_instance, vertical_factor=vertical_factor)
             
         except KeyboardInterrupt:
             print("\n🛑 Navigation interrupted by user")
@@ -120,7 +120,7 @@ class NavigationInterface:
                 print(f"❌ Error reading input: {e}")
                 return None
     
-    def _navigation_loop(self, drone_instance=None):
+    def _navigation_loop(self, drone_instance=None, vertical_factor=1.0):
         """Main navigation interaction loop."""
         loop_count = 0
         while self.is_running:
@@ -144,7 +144,7 @@ class NavigationInterface:
                         break
                 elif isinstance(choice, str):
                     # Navigate to selected waypoint
-                    success = self.nav_manager.navigate_to_waypoint(choice, drone_instance=drone_instance)
+                    success = self.nav_manager.navigate_to_waypoint(choice, drone_instance=drone_instance, vertical_factor=vertical_factor)
                     if success:
                         print(f"\n🎯 Navigation completed!")
                         loop_count += 1

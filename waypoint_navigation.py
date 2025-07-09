@@ -188,7 +188,7 @@ class WaypointNavigationManager:
         
         return movements
     
-    def navigate_to_waypoint(self, target_waypoint_id: str, drone_instance=None) -> bool:
+    def navigate_to_waypoint(self, target_waypoint_id: str, drone_instance=None, vertical_factor=1.0) -> bool:
         """
         Navigate to target waypoint and update current position.
         
@@ -216,7 +216,7 @@ class WaypointNavigationManager:
             print(f"Total movements: {len(movements)}")
             
             # Execute navigation
-            success = self._execute_navigation(movements, direction, drone_instance=drone_instance)
+            success = self._execute_navigation(movements, direction, drone_instance=drone_instance, vertical_factor=vertical_factor)
             
             if success:
                 # Update current position
@@ -230,8 +230,8 @@ class WaypointNavigationManager:
         except Exception as e:
             print(f"❌ Navigation error: {e}")
             return False
-    
-    def _execute_navigation(self, movements: List[NavigationMovement], direction: NavigationDirection, drone_instance=None) -> bool:
+
+    def _execute_navigation(self, movements: List[NavigationMovement], direction: NavigationDirection, drone_instance=None, vertical_factor=1.0) -> bool:
         """Execute the navigation movements."""
         
         print(f"\n🚁 Executing {len(movements)} movements ({direction.value})...")

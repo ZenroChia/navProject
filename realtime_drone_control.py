@@ -259,7 +259,7 @@ class RealTimeDroneController:
                         'id': movement['id'],
                         'type': movement['type'],
                         'direction': movement['direction'],
-                        'distance': movement['distance'] / 2,
+                        'distance': movement['distance'],
                         'timestamp': movement['timestamp']
                     }
                     processed_movements.append(processed_movement)
