@@ -110,11 +110,6 @@ class TelloNavigationApp:
 ╚══════════════════════════════════════════════════════════════╝
         """
         print(welcome_text)
-        
-        if self.simulate:
-            print("🔧 Running in SIMULATION MODE - no actual drone required")
-        else:
-            print("🚁 Real drone mode - ensure Tello is powered on and connected")
     
     def _get_startup_mode(self) -> str:
         """Get the startup mode from user."""
