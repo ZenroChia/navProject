@@ -235,7 +235,7 @@ class WaypointNavigationManager:
         """Execute the navigation movements."""
         
         print(f"\n🚁 Executing {len(movements)} movements ({direction.value})...")
-        drone_instance.set_speed(50)  # Set a reasonable speed for movements
+        drone_instance.set_speed(55)  # Set a reasonable speed for movements
         try: 
             for i, movement in enumerate(movements, 1):
                 print(f"  Step {i}/{len(movements)}: {movement.type} ")

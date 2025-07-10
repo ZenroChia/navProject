@@ -171,7 +171,7 @@ class RealTimeDroneController:
         
         # Calculate movement duration and distance
         end_time = time.time()
-        duration = end_time - self.current_movement['start_time']
+        duration = end_time - self.current_movement['start_time'] + 0.5 # Add a small buffer to account for halt delay
         
         # Calculate distance moved
         distance = self.movement_speed * duration  # cm
