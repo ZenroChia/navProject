@@ -265,6 +265,7 @@ class WaypointNavigationManager:
                         drone_instance.send_rc_control(0, 0, 0, 0)  # Stop any ongoing movement
 
                     drone_instance.move_forward(int(distance))
+                    time.sleep(0.5)  # Allow some time for the drone to stabilize
                     drone_instance.send_rc_control(0, 0, 0, 0)  # Stop any ongoing movement
                     print(f"  Moved forward {distance} cm at yaw {yaw} degrees")
 
@@ -275,14 +276,12 @@ class WaypointNavigationManager:
                             drone_instance.move_up(int(actual_distance))
                             print(f"  Lifted up {actual_distance} cm")
                         case ("down", NavigationDirection.FORWARD):
-                            actual_distance = max((distance * vertical_factor), 20)
-                            drone_instance.move_down(int(actual_distance))
-                            print(f"  Lowered down {actual_distance} cm")
+                            drone_instance.move_down(int(distance))
+                            print(f"  Lowered down {distance} cm")
                         ############# REVERSE MOVEMENT HANDLING #############
                         case ("up", NavigationDirection.REVERSE):
-                            actual_distance = max((distance * vertical_factor), 20)
-                            drone_instance.move_up(int(actual_distance))
-                            print(f"  Lifted up {actual_distance} cm")
+                            drone_instance.move_up(int(distance))
+                            print(f"  Lifted up {distance} cm")
                         case ("down", NavigationDirection.REVERSE):
                             actual_distance = max((distance / vertical_factor), 20)
                             drone_instance.move_down(int(actual_distance))
